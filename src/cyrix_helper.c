@@ -45,7 +45,6 @@
 #include "vgaHW.h"
 #include "xf86_ansic.h"
 #include "compiler.h"
-#include "xf86.h"
 
 #define CYRIXmarkLinesDirty { \
                                int k = 0; \
@@ -59,7 +58,7 @@ static void CYRIXresetVGA(ScrnInfoPtr pScrn, unsigned long vgaIOBase);
 
 void  Cyrix1bppColorMap(ScrnInfoPtr pScrn)
 {	/* use dedicated color map routines on new chipsets in 8bpp */
-	xf86DrvMsg(pScrn->scrnIndex, X_PROBED, "Cyrix 1BPP is only a stub for now.\n");
+	ErrorF("%s: Cyrix 1BPP is only a stub for now.\n", X_PROBED);
 	return;
 }
 
