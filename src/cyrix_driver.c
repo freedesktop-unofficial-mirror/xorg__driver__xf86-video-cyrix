@@ -50,7 +50,7 @@
  *		(note that most of the data books have been released by
  *		 NatSemi and are downloadable for free as pdf files)
  */
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/cyrix/cyrix_driver.c,v 1.27 2003/08/23 16:09:17 dawes Exp $ */
+/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/cyrix/cyrix_driver.c,v 1.30tsi Exp $ */
 
 #include "fb.h"
 #include "mibank.h"
@@ -73,8 +73,10 @@
 
 #include "cyrix.h"
 
+#ifdef XFreeXDGA
 #define _XF86DGA_SERVER_
 #include "extensions/xf86dgastr.h"
+#endif
 
 #include "opaque.h"
 #define DPMS_SERVER
@@ -99,8 +101,8 @@ static void	CYRIXAdjustFrame(int scrnIndex, int x, int y, int flags);
 /* Optional functions */
 static void	CYRIXFreeScreen(int scrnIndex, int flags);
 static int	CYRIXFindIsaDevice(GDevPtr dev);
-static int	CYRIXValidMode(int scrnIndex, DisplayModePtr mode, Bool verbose,
-			     int flags);
+static ModeStatus CYRIXValidMode(int scrnIndex, DisplayModePtr mode,
+				 Bool verbose, int flags);
 
 /* Internally used functions */
 static void	CYRIXSave(ScrnInfoPtr pScrn);
@@ -233,7 +235,7 @@ static XF86ModuleVersionInfo cyrixVersRec =
 	MODULEVENDORSTRING,
 	MODINFOSTRING1,
 	MODINFOSTRING2,
-	XF86_VERSION_CURRENT,
+	XORG_VERSION_CURRENT,
 	CYRIX_MAJOR_VERSION, CYRIX_MINOR_VERSION, CYRIX_PATCHLEVEL,
 	ABI_CLASS_VIDEODRV,			/* This is a video driver */
 	ABI_VIDEODRV_VERSION,
@@ -549,8 +551,7 @@ CYRIXPreInit(ScrnInfoPtr pScrn, int flags)
     int videoram;
     int i;
     ClockRangePtr clockRanges;
-    CARD32 physbase, padsize;
-    int CYRIXisOldChipRevision;
+    unsigned int physbase, padsize;
     int device_step, device_revision;
     int vgaIOBase;
     unsigned char gcr;
@@ -618,8 +619,8 @@ CYRIXPreInit(ScrnInfoPtr pScrn, int flags)
     /*      end GGI MediaGX driver based code */
     if (padsize == 0) return (FALSE);
 
-    xf86ErrorF("%s: GX_BASE: 0x%x\n",CYRIX_NAME, physbase);
-    xf86ErrorF("%s: Scratchpad size: %d kbytes\n",CYRIX_NAME, padsize);
+    xf86ErrorF("%s: GX_BASE: 0x%x\n", CYRIX_NAME, physbase);
+    xf86ErrorF("%s: Scratchpad size: %d kbytes\n", CYRIX_NAME, padsize);
 
     /* Probe for the MediaGX processor version details.  Older versions
      * use different op-codes for setting the organization of the
@@ -634,8 +635,6 @@ CYRIXPreInit(ScrnInfoPtr pScrn, int flags)
     device_revision &= 0xFF;
     xf86ErrorF("%s: MediaGX processor ID %d revision %d\n", 
 		CYRIX_NAME, device_step, device_revision);
-
-    CYRIXisOldChipRevision = (device_step == 0 && device_revision < 40);
 
     /* Some  MediaGX systems have different blit buffer offsets than
      * is  indicated by the scratchpad size.  Make sure that we have
@@ -840,7 +839,7 @@ CYRIXPreInit(ScrnInfoPtr pScrn, int flags)
 	pCyrix->IOAccelAddress = 0x40008100; /* Hard coded for 1st try */
     }
 
-    xf86DrvMsg(pScrn->scrnIndex, from,"IO registers at 0x%x\n",pCyrix->IOAccelAddress);
+    xf86DrvMsg(pScrn->scrnIndex, from,"IO registers at 0x%lx\n",(unsigned long)pCyrix->IOAccelAddress);
 
     /* HW bpp matches reported bpp */
     pCyrix->HwBpp = pScrn->bitsPerPixel;
@@ -1011,7 +1010,7 @@ CYRIXModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 {
     int ret = -1;
     vgaHWPtr hwp;
-    vgaRegPtr vgaReg;
+/*    vgaRegPtr vgaReg; */
     CYRIXPrvPtr pCyrix;
     CYRIXRegPtr cyrixReg;
 
@@ -1032,7 +1031,7 @@ CYRIXModeInit(ScrnInfoPtr pScrn, DisplayModePtr mode)
 	return FALSE;
 
     /* Program the registers */
-    vgaReg = &hwp->ModeReg;
+/*    vgaReg = &hwp->ModeReg; */
     cyrixReg = &pCyrix->ModeReg;
 
     CyrixRestore(pScrn, cyrixReg);
@@ -1049,13 +1048,13 @@ CYRIXRestore(ScrnInfoPtr pScrn)
 {
     vgaHWPtr hwp;
     vgaRegPtr vgaReg;
-    CYRIXPrvPtr pCyrix;
-    CYRIXRegPtr cyrixReg;
+    /*CYRIXPrvPtr pCyrix;*/
+    /*CYRIXRegPtr cyrixReg*/;
 
     hwp = VGAHWPTR(pScrn);
-    pCyrix = CYRIXPTR(pScrn);
+    /*pCyrix = CYRIXPTR(pScrn);*/
     vgaReg = &hwp->SavedReg;
-    cyrixReg = &pCyrix->SavedReg;
+    /*cyrixReg = &pCyrix->SavedReg*/;
 
     vgaHWProtect(pScrn, TRUE);
 
@@ -1501,7 +1500,7 @@ CYRIXFreeScreen(int scrnIndex, int flags)
 /* Checks if a mode is suitable for the selected chipset. */
 
 /* Optional */
-static int
+static ModeStatus
 CYRIXValidMode(int scrnIndex, DisplayModePtr mode, Bool verbose, int flags)
 {
     return(MODE_OK);
