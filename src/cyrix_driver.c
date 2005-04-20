@@ -75,12 +75,12 @@
 
 #ifdef XFreeXDGA
 #define _XF86DGA_SERVER_
-#include "extensions/xf86dgastr.h"
+#include <X11/extensions/xf86dgastr.h>
 #endif
 
 #include "opaque.h"
 #define DPMS_SERVER
-#include "extensions/dpms.h"
+#include <X11/extensions/dpms.h>
 
 static const OptionInfoRec * CYRIXAvailableOptions(int chip, int busid);
 static void	CYRIXIdentify(int flags);
