@@ -136,7 +136,7 @@ enum GenericTypes {
  * an upper-case version of the driver name.
  */
 
-DriverRec CYRIX = {
+_X_EXPORT DriverRec CYRIX = {
     VERSION,
     CYRIX_DRIVER_NAME,
     CYRIXIdentify,
@@ -243,7 +243,7 @@ static XF86ModuleVersionInfo cyrixVersRec =
 	{0,0,0,0}
 };
 
-XF86ModuleData cyrixModuleData = { &cyrixVersRec, cyrixSetup, NULL };
+_X_EXPORT XF86ModuleData cyrixModuleData = { &cyrixVersRec, cyrixSetup, NULL };
 
 pointer
 cyrixSetup(pointer module, pointer opts, int *errmaj, int *errmin)
