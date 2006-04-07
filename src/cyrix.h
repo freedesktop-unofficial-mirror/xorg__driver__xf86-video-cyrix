@@ -37,7 +37,7 @@
  *          Dirk H. Hohndel (hohndel@suse.de),
  *          Portions: the GGI project & confidential CYRIX databooks.
  */
-/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/cyrix/cyrix.h,v 1.4 2002/11/06 11:38:59 alanh Exp $ */
+/* $XFree86: xc/programs/Xserver/hw/xfree86/drivers/cyrix/cyrix.h,v 1.2 2000/04/19 16:57:43 eich Exp $ */
 
 #ifndef _CYRIX_H_
 #define _CYRIX_H_
@@ -45,6 +45,7 @@
 #include "xaa.h"
 #include "xf86Cursor.h"
 #include "vgaHW.h"
+#include <string.h>
 
 /* this code is partly based on the MediaGX sources from the GGI project
    based on CYRIX example code (gxvideo.c) and included with CYRIX and
