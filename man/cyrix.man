@@ -69,7 +69,7 @@ this is buggy and may result in strange illegal instruction traps.
 .PP
 Hardware cursors are not currently supported.
 .SH "SEE ALSO"
-__xservername__(1), __xconfigfile__(__filemansuffix__), xorgconfig(1), Xserver(1), X(__miscmansuffix__)
+__xservername__(1), __xconfigfile__(__filemansuffix__), Xserver(1), X(__miscmansuffix__)
 .SH AUTHORS
 Authors include: Richard Hecker, Annius Groenink, Dirk Hohndel, The GGI
 Project, Alan Cox.
