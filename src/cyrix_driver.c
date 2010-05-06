@@ -1293,7 +1293,9 @@ CYRIXScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 	pBankInfo->pBankB = hwp->Base;
 	pBankInfo->BankSize = 0x10000;
 	pBankInfo->nBankDepth = pScrn->depth;
+#if GET_ABI_MAJOR(ABI_VIDEODRV_VERSION) < 8
 	xf86EnableAccess(pScrn);
+#endif
 
 	pBankInfo->SetSourceBank = 
 		(miBankProcPtr)CYRIXSetRead;
