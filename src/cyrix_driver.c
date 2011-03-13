@@ -57,7 +57,6 @@
 #endif
 
 #include "fb.h"
-#include "mibank.h"
 #include "micmap.h"
 #include "xf86.h"
 #include "xf86_OSproc.h"
