@@ -20,24 +20,31 @@
 #
 # Process this file with autoconf to produce a configure script
 
-AC_PREREQ(2.57)
+AC_PREREQ([2.60])
 AC_INIT([xf86-video-cyrix],
-        1.1.0,
+        [1.1.0],
         [https://bugs.freedesktop.org/enter_bug.cgi?product=xorg],
-        xf86-video-cyrix)
+        [xf86-video-cyrix])
 
 AC_CONFIG_SRCDIR([Makefile.am])
 AM_CONFIG_HEADER([config.h])
 AC_CONFIG_AUX_DIR(.)
 
-AM_INIT_AUTOMAKE([dist-bzip2])
+# Require xorg-macros: XORG_DEFAULT_OPTIONS
+m4_ifndef([XORG_MACROS_VERSION],
+          [m4_fatal([must install xorg-macros 1.4 or later before running autoconf/autogen])])
+XORG_MACROS_VERSION(1.4)
+XORG_DEFAULT_OPTIONS
 
+# Initialize Automake
+AM_INIT_AUTOMAKE([foreign dist-bzip2])
 AM_MAINTAINER_MODE
 
-# Checks for programs.
+# Initialize libtool
 AC_DISABLE_STATIC
 AC_PROG_LIBTOOL
 AC_PROG_CC
+AM_PROG_AS
 
 AH_TOP([#include "xorg-server.h"])
 
@@ -47,17 +54,48 @@ AC_ARG_WITH(xorg-module-dir,
             [moduledir="$withval"],
             [moduledir="$libdir/xorg/modules"])
 
+if test "x$GCC" = "xyes"; then
+       GCC_WARNINGS1="-Wall -Wpointer-arith -Wstrict-prototypes"
+       GCC_WARNINGS2="-Wmissing-prototypes -Wmissing-declarations"
+       GCC_WARNINGS3="-Wnested-externs -fno-strict-aliasing"
+       GCC_WARNINGS="$GCC_WARNINGS1 $GCC_WARNINGS2 $GCC_WARNINGS3"
+       if test "x$WERROR" = "xyes"; then
+               GCC_WARNINGS="${GCC_WARNINGS} -Werror"
+       fi
+       AMD_CFLAGS="$GCC_WARNINGS $AMD_CFLAGS"
+fi
+
 # Checks for extensions
 XORG_DRIVER_CHECK_EXT(RANDR, randrproto)
 XORG_DRIVER_CHECK_EXT(RENDER, renderproto)
+XORG_DRIVER_CHECK_EXT(XV, videoproto)
 XORG_DRIVER_CHECK_EXT(DPMSExtension, xextproto)
 XORG_DRIVER_CHECK_EXT(XFreeXDGA, xf86dgaproto)
 
 # Checks for pkg-config packages
-PKG_CHECK_MODULES(XORG, [xorg-server >= 1.0.99.901 xproto fontsproto $REQUIRED_MODULES])
+PKG_CHECK_MODULES(XORG, [xorg-server xproto fontsproto $REQUIRED_MODULES])
+PKG_CHECK_MODULES(XEXT, [xextproto >= 7.0.99.1],
+                  HAVE_XEXTPROTO_71="yes"; AC_DEFINE(HAVE_XEXTPROTO_71, 1, [xextproto 7.1 available]),
+                  HAVE_XEXTPROTO_71="no")
+AM_CONDITIONAL(HAVE_XEXTPROTO_71, [ test "$HAVE_XEXTPROTO_71" = "yes" ])
 sdkdir=$(pkg-config --variable=sdkdir xorg-server)
 
 # Checks for libraries.
+SAVE_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $XORG_CFLAGS"
+AC_CHECK_DECL(XSERVER_LIBPCIACCESS,
+              [XSERVER_LIBPCIACCESS=yes],[XSERVER_LIBPCIACCESS=no],
+              [#include "xorg-server.h"])
+CPPFLAGS="$SAVE_CPPFLAGS"
+
+# Checks for header files.
+AC_HEADER_STDC
+
+if test "x$XSERVER_LIBPCIACCESS" = xyes; then
+    PKG_CHECK_MODULES([PCIACCESS], [pciaccess >= 0.8.0])
+    XORG_CFLAGS="$XORG_CFLAGS $PCIACCESS_CFLAGS"
+fi
+AM_CONDITIONAL(XSERVER_LIBPCIACCESS, test "x$XSERVER_LIBPCIACCESS" = xyes)
 
 # Checks for header files.
 AC_HEADER_STDC
