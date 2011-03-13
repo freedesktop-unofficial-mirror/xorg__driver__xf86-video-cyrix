@@ -68,7 +68,9 @@
 #include "vgaHW.h"
 #include "xf86DDC.h"
 #include "xf86RAC.h"
+#ifndef XSERVER_LIBPCIACCESS
 #include "xf86Resources.h"
+#endif
 #include "compiler.h"
 #include "xf86int10.h"
 #include "vbe.h"
@@ -660,7 +662,9 @@ CYRIXPreInit(ScrnInfoPtr pScrn, int flags)
     /* This is the general case */
     for (i = 0; i<pScrn->numEntities; i++) {
 	pCyrix->pEnt = xf86GetEntityInfo(pScrn->entityList[i]);
-	if (pCyrix->pEnt->resources) return FALSE;
+	#ifndef XSERVER_LIBPCIACCESS
+        if (pCyrix->pEnt->resources) return FALSE;
+        #endif
 	pCyrix->Chipset = pCyrix->pEnt->chipset;
 	pScrn->chipset = (char *)xf86TokenToString(CYRIXChipsets,
 						pCyrix->pEnt->chipset);
