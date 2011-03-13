@@ -66,9 +66,9 @@
 #include "shadowfb.h"
 #include "vgaHW.h"
 #include "xf86DDC.h"
-#include "xf86RAC.h"
 #ifndef XSERVER_LIBPCIACCESS
 #include "xf86Resources.h"
+#include "xf86RAC.h"
 #endif
 #include "compiler.h"
 #include "xf86int10.h"
