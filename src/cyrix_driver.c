@@ -455,7 +455,7 @@ CYRIXProbe(DriverPtr drv, int flags)
 	        if ((pScrn = xf86ConfigIsaEntity(pScrn, 0, usedChips[i],
 						   CYRIXISAChipsets, NULL,
 						   NULL, NULL, NULL, NULL))){
-		    pScrn->driverVersion = VERSION;
+		    pScrn->driverVersion = CYRIX_VERSION;
 		    pScrn->driverName    = CYRIX_DRIVER_NAME;
 		    pScrn->name          = CYRIX_NAME;
 		    pScrn->Probe         = CYRIXProbe;

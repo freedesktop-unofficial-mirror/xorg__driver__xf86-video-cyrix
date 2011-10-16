@@ -110,7 +110,7 @@ typedef struct {
         int                     CYRIXbltBufSize;
         EntityInfoPtr       	pEnt;
 	unsigned char *		FbBase;
-	pciVideoPtr		PciInfo;
+	struct pci_device *	PciInfo;
 	XAAInfoRecPtr		AccelInfoRec;
 	xf86CursorInfoPtr   	CursorInfoRec;
 	CloseScreenProcPtr  	CloseScreen;
