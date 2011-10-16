@@ -296,7 +296,7 @@ CYRIXFreeRec(ScrnInfoPtr pScrn)
 {
     if (pScrn->driverPrivate == NULL)
 	return;
-    xfree(pScrn->driverPrivate);
+    free(pScrn->driverPrivate);
     pScrn->driverPrivate = NULL;
 }
 
@@ -432,7 +432,7 @@ CYRIXProbe(DriverPtr drv, int flags)
 		    foundScreen = TRUE;
 		}
 	    }
-	    xfree(usedChips);
+	    free(usedChips);
 	}
     }
     
@@ -445,7 +445,7 @@ CYRIXProbe(DriverPtr drv, int flags)
         foundScreen = TRUE;
 
         /* Free it since we don't need that list after this */
-        xfree(devSections);
+        free(devSections);
 
         if (!(flags & PROBE_DETECT)) {
           for (i=0; i < numUsed; i++) {
@@ -471,7 +471,7 @@ CYRIXProbe(DriverPtr drv, int flags)
 	 }
       }
     }
-    xfree(usedChips);
+    free(usedChips);
     return (foundScreen);
 }
 
@@ -745,7 +745,7 @@ CYRIXPreInit(ScrnInfoPtr pScrn, int flags)
     xf86CollectOptions(pScrn, NULL);
 
     /* Process the options */
-    if (!(pCyrix->Options = xalloc(sizeof(CYRIXOptions))))
+    if (!(pCyrix->Options = malloc(sizeof(CYRIXOptions))))
 	return FALSE;
     memcpy(pCyrix->Options, CYRIXOptions, sizeof(CYRIXOptions));
     xf86ProcessOptions(pScrn->scrnIndex, pScrn->options, pCyrix->Options);
@@ -1237,7 +1237,7 @@ CYRIXScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 
     if(pCyrix->ShadowFB) {
  	pCyrix->ShadowPitch = BitmapBytePad(pScrn->bitsPerPixel * width);
-	pCyrix->ShadowPtr = xalloc(pCyrix->ShadowPitch * height);
+	pCyrix->ShadowPtr = malloc(pCyrix->ShadowPitch * height);
 	displayWidth = pCyrix->ShadowPitch / (pScrn->bitsPerPixel >> 3);
         FBStart = pCyrix->ShadowPtr;
     } else {
@@ -1314,7 +1314,7 @@ CYRIXScreenInit(int scrnIndex, ScreenPtr pScreen, int argc, char **argv)
 		(miBankProcPtr)CYRIXSetReadWrite;
 	if (!miInitializeBanking(pScreen, pScrn->virtualX, pScrn->virtualY,
 				 pScrn->displayWidth, pBankInfo)) {
-	    xfree(pBankInfo);
+	    free(pBankInfo);
 	    pBankInfo = NULL;
 	    return FALSE;
 	}
@@ -1492,7 +1492,7 @@ CYRIXCloseScreen(int scrnIndex, ScreenPtr pScreen)
     if(pCyrix->AccelInfoRec)
 	XAADestroyInfoRec(pCyrix->AccelInfoRec);
     if (pCyrix->ShadowPtr)
-	xfree(pCyrix->ShadowPtr);
+	free(pCyrix->ShadowPtr);
     pScrn->vtSema = FALSE;
     
     pScreen->CloseScreen = pCyrix->CloseScreen;
