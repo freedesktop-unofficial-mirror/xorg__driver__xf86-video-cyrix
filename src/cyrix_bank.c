@@ -52,11 +52,10 @@
 
 int
 CYRIXSetRead(ScreenPtr pScreen, int bank)
-{ 
+{
     outw(0x3D6, ((((bank << 3) & 0xFF) << 8) | 0x10));
     return 0;
 }
-
 
 int
 CYRIXSetWrite(ScreenPtr pScreen, int bank)
@@ -64,7 +63,6 @@ CYRIXSetWrite(ScreenPtr pScreen, int bank)
     outw(0x3D6, ((((bank << 3) & 0xFF) << 8) | 0x11));
     return 0;
 }
-
 
 int
 CYRIXSetReadWrite(ScreenPtr pScreen, int bank)
